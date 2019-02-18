@@ -128,7 +128,7 @@ def configure_her(params):
     env = cached_make_env(params['make_env'])
     env.reset()
 
-    def reward_fun(ag_2, g, info):  # vectorized
+    def reward_fun(info, ag_2=None, g=None):  # vectorized
         return env.compute_reward(achieved_goal=ag_2, desired_goal=g, info=info)
 
     # Prepare configuration for HER.
@@ -191,7 +191,7 @@ def configure_dims(params):
     dims = {
         'o': obs['observation'].shape[0],
         'u': env.action_space.shape[0],
-        'g': obs['desired_goal'].shape[0],
+        #'g': info['desired_goal'].shape[0],
     }
     for key, value in info.items():
         value = np.array(value)

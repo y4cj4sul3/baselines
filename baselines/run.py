@@ -2,6 +2,7 @@ import sys
 import multiprocessing
 import os.path as osp
 import gym
+import custom_gym
 from collections import defaultdict
 import tensorflow as tf
 import numpy as np
@@ -72,12 +73,19 @@ def train(args, extra_args):
         if alg_kwargs.get('network') is None:
             alg_kwargs['network'] = get_default_network(env_type)
 
+    if alg_kwargs.get('save_path_her') is None:
+        alg_kwargs['save_path_her'] = None
+    if alg_kwargs.get('load_path_her') is None:
+        alg_kwargs['load_path_her'] = None
+
     print('Training {} on {}:{} with arguments \n{}'.format(args.alg, env_type, env_id, alg_kwargs))
 
     model = learn(
         env=env,
         seed=seed,
         total_timesteps=total_timesteps,
+        save_path=alg_kwargs["save_path_her"],
+        load_path=alg_kwargs["load_path_her"],
         **alg_kwargs
     )
 
