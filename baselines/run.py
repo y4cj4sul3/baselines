@@ -73,21 +73,30 @@ def train(args, extra_args):
         if alg_kwargs.get('network') is None:
             alg_kwargs['network'] = get_default_network(env_type)
 
-    if alg_kwargs.get('save_path_her') is None:
-        alg_kwargs['save_path_her'] = None
-    if alg_kwargs.get('load_path_her') is None:
-        alg_kwargs['load_path_her'] = None
+    if args.alg == 'her':
+        if alg_kwargs.get('save_path_her') is None:
+            alg_kwargs['save_path_her'] = None
+        if alg_kwargs.get('load_path_her') is None:
+            alg_kwargs['load_path_her'] = None
 
     print('Training {} on {}:{} with arguments \n{}'.format(args.alg, env_type, env_id, alg_kwargs))
 
-    model = learn(
-        env=env,
-        seed=seed,
-        total_timesteps=total_timesteps,
-        save_path=alg_kwargs["save_path_her"],
-        load_path=alg_kwargs["load_path_her"],
-        **alg_kwargs
-    )
+    if args.alg == 'her':
+        model = learn(
+            env=env,
+            seed=seed,
+            total_timesteps=total_timesteps,
+            save_path=alg_kwargs["save_path_her"],
+            #load_path=alg_kwargs["load_path_her"],
+            **alg_kwargs
+        )
+    else:
+        model = learn(
+            env=env,
+            seed=seed,
+            total_timesteps=total_timesteps,
+            **alg_kwargs
+        )
 
     return model, env
 
@@ -223,6 +232,7 @@ def main(args):
         logger.log("Running trained model")
         env = build_env(args)
         obs = env.reset()
+        print(env.envs[0].unwrapped.instruction)
 
         state = model.initial_state if hasattr(model, 'initial_state') else None
         dones = np.zeros((1,))
@@ -239,6 +249,7 @@ def main(args):
 
             if done:
                 obs = env.reset()
+                print(env.envs[0].unwrapped.instruction)
 
         env.close()
 
